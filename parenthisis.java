@@ -1,58 +1,73 @@
-//nazrait tefera
-//november 11
-//this checks if an input string is valid
+// nazrait tefera
+// november 11
+// ParenthesisChecker - checks if input string has valid matching and ordering of brackets
+
+import java.util.Deque;
+import java.util.ArrayDeque;
+
 public class ParenthesisChecker {
 
     //
-    // Pre-condition: the input s may contain braces,brackets or parenthisis but cant be null 
+    // Pre-condition: the input s may contain braces, brackets or parentheses but can't be null
     // Post-condition: Prints true if all are properly matched and ordered
     //
     public static void main(String[] args) {
-        String s = "{[()]}";  
-        System.out.println(isValid(s));
+        String[] tests = {
+            "{[()]}",   
+            ")(",       
+            "{[}]",     
+            "([{}])",   
+            "([]{})",   
+            "([)]",     
+            ""          
+        };
+
+        for (String t : tests) {
+            System.out.printf("%s -> %b%n", t, isValid(t));
+        }
     }
 
     //
     // Pre-condition: The input string s includes '(', ')', '{', '}', '[' or ']'.
-    //               
     // Post-condition: Returns true if all types of brackets are balanced and correctly ordered
     //
     public static boolean isValid(String s) {
-        int round = 0;  
-        int curly = 0;  
-        int square = 0; 
+        if (s == null) return false; 
+        Deque<Character> stack = new ArrayDeque<>();
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
 
             
-            if (c == '(') {
-                round++;
-            } else if (c == '{') {
-                curly++;
-            } else if (c == '[') {
-                square++;
+            if (c == '(' || c == '{' || c == '[') {
+                stack.push(c);
             }
             
-            else if (c == ')') {
-                round--;
-                if (round < 0) {
-                    return false; 
+            else if (c == ')' || c == '}' || c == ']') {
+                if (stack.isEmpty()) {
+                    
+                    return false;
                 }
-            } else if (c == '}') {
-                curly--;
-                if (curly < 0) {
-                    return false; 
+                char top = stack.pop();
+                if (!matches(top, c)) {
+                    
+                    return false;
                 }
-            } else if (c == ']') {
-                square--;
-                if (square < 0) {
-                    return false; 
-                }
+            }
+            
+            else {
+                
             }
         }
 
-        // all counts should be 0 if every opening has a closing
-        return (round == 0 && curly == 0 && square == 0);
+       
+        return stack.isEmpty();
+    }
+
+   
+    private static boolean matches(char open, char close) {
+        return (open == '(' && close == ')') ||
+               (open == '{' && close == '}') ||
+               (open == '[' && close == ']');
     }
 }
